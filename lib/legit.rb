@@ -3,8 +3,12 @@ require 'thor'
 
 class Legit < Thor
   desc "log", "print a graph-like log"
+  method_option :me, :type => :boolean, :desc => 'Only include my commits'
   def log
-    system("git log --pretty=format:'%C(yellow)%h%Creset%C(bold cyan)%d%Creset %s %Cgreen(%cr)%Creset %C(bold magenta) <%an>%Creset' --graph --abbrev-commit --date=relative")
+    command = []
+    command << "git log --pretty=format:'%C(yellow)%h%Creset%C(bold cyan)%d%Creset %s %Cgreen(%cr)%Creset %C(bold magenta) <%an>%Creset' --graph --abbrev-commit --date=relative"
+    command << author_equals_me if options[:me]
+    system(command.join(' '))
   end
 
   desc "catch-todos [TODO_FORMAT]", "Abort commit if any todos in TODO_FORMAT found"
