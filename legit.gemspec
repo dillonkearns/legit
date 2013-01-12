@@ -3,7 +3,7 @@ require File.expand_path("../lib/legit/version", __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Dillon Kearns"]
   gem.email         = ["dillon@dillonkearns.com"]
-  gem.description   = "A collection of scripts for common git tasks, to simplify and improve workflow."
+  gem.description   = "A collection of scripts for common git tasks to simplify and improve workflow."
   gem.summary       = gem.description
   gem.homepage      = "https://github.com/dillonkearns/legit"
 
