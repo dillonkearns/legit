@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
 
+# trap interrupts to prevent big stack traces
+Signal.trap("INT") { exit 1 }
+
+# don't buffer output
+$stdout.sync = true
+$stderr.sync = true
+
 require 'legit'
 
 Legit.start
