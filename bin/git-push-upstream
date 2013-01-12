@@ -1,0 +1,19 @@
+#! /usr/bin/ruby
+
+require 'lib/legit_helper'
+
+branch_name = ARGV[0] or raise 'Must pass in branch name'
+
+system("git branch -d #{branch_name}")
+
+if $?.success?
+  delete_remote_branch(branch_name)
+else
+  show("Force delete branch #{branch_name}? (y/n)", :warning)
+  if STDIN.gets.chomp =~ /^y/
+    system("git branch -D #{branch_name}")
+    delete_remote_branch(branch_name)
+  else
+    puts "Abort. #{branch_name} not deleted"
+  end
+end
