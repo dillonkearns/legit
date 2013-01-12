@@ -8,12 +8,17 @@ class Legit < Thor
   end
 
   desc "catch-todos [TODO_FORMAT]", "Abort commit if any todos in TODO_FORMAT found"
+  method_options %w[warn -w] => :boolean, :desc => 'Warn and prompt the user to choose whether to abort the commit'
   def catch_todos(todo_format = "TODO")
     system("git diff --staged | grep '^+' | grep #{todo_format}")
 
     if $?.success?
-      show("[pre-commit hook] Aborting commit... found staged `#{todo_format}`s.", :warning)
-      exit 1
+      if options[:warn]
+        exit 1 unless positive_response?("[pre-commit hook] Found staged `#{todo_format}`s. Do you still want to continue?", :warning)
+      else
+        show("[pre-commit hook] Aborting commit... found staged `#{todo_format}`s.", :warning)
+        exit 1
+      end
     else
       show("Success: No #{todo_format}s staged.", :success)
     end

@@ -15,6 +15,8 @@ def show(message, type = :success)
         :green
       when :warning
         :red
+      when :normal
+        :white
       else
         raise 'Unknown prompt type'
       end
@@ -22,3 +24,8 @@ def show(message, type = :success)
   puts message.send(color)
 end
 
+
+def positive_response?(message, type = :normal)
+  show("#{message} (y/n)", type)
+  STDIN.gets.chomp =~ /y/
+end
