@@ -1,4 +1,4 @@
-# Legit
+# Legit [![Dependency Status](https://gemnasium.com/dillonkearns/legit.png)](https://gemnasium.com/dillonkearns/legit) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/dillonkearns/dotfile-linker)
 
 ## Contributing
 
