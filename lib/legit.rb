@@ -8,7 +8,7 @@ class Legit < Thor
   end
 
   desc "catch-todos [TODO_FORMAT]", "Abort commit if any todos in TODO_FORMAT found"
-  method_options %w[warn -w] => :boolean, :desc => 'Warn and prompt the user to choose whether to abort the commit'
+  method_option :warn, :type => :boolean, :aliases => "-w", :desc => 'Warn and prompt the user to choose whether to abort the commit'
   def catch_todos(todo_format = "TODO")
     system("git diff --staged | grep '^+' | grep #{todo_format}")
 
