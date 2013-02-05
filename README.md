@@ -22,6 +22,12 @@ legit catch-todos TODO
 chmod +x .git/hooks/pre-commit
 ```
 
+Enable or disable catch-todos with the `--enable` and `--disable` options
+```
+legit catch-todos --disable     # will not check todos until re-enabled
+legit catch-todos --enable      # sets it back to normal
+```
+
 Note: if you use a graphical git tool (such as [SourceTree](http://http://www.sourcetreeapp.com/) for OS X), you may need read the following:
 
 RVM and similar tools do store executables in custom locations instead of the standard locations for executables such as `/usr/bin`. Since your `.bash_profile` (or similar) might not be executed by your GUI tool, you may need to create a symlink to legit in a location that is in the tool's default path. `/usr/bin` is usually included, so this should do:
