@@ -19,4 +19,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 10.0.3"
   gem.add_runtime_dependency     "colorize", "~> 0.5.8"
   gem.add_runtime_dependency     "thor", "~> 0.17.0"
+  gem.add_runtime_dependency     "rugged", "0.17.0.b7"
 end

@@ -1,4 +1,5 @@
 require 'colorize'
+require 'rugged'
 
 def current_branch
   system "git rev-parse --abbrev-ref HEAD"
@@ -23,6 +24,8 @@ def show(message, type = :success)
         :green
       when :warning
         :red
+      when :low_warning
+        :yellow
       when :normal
         :white
       else
