@@ -16,7 +16,6 @@ class Legit < Thor
   end
 
   desc "catch-todos [TODO_FORMAT]", "Abort commit if any todos in TODO_FORMAT found"
-  method_option :warn, :type => :boolean, :aliases => "-w", :desc => 'Warn and prompt the user to choose whether to abort the commit'
   method_option :enable, :type => :boolean, :desc => 'Enable todo checking'
   method_option :disable, :type => :boolean, :desc => 'Disable todo checking'
   def catch_todos(todo_format = "TODO")
