@@ -49,6 +49,11 @@ class Legit < Thor
     end
   end
 
+  desc "bisect COMMAND", "Git Bisect with HEAD as the bad SHA and HEAD~20 as the good SHA, running your test for you with each step. If the test passes, type G <enter>. If it fails, type B <enter>. If it doesn't successfully run, type S <enter>, until git displays the SHA where the test started failing. Type q <enter> to quit."
+  def bisect(command)
+    system("git bisect start; git bisect bad; git bisect good HEAD~20")
+  end
+
   private
   def repo
     @repo ||= Rugged::Repository.new('.')
