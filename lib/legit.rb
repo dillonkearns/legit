@@ -49,9 +49,25 @@ class Legit < Thor
     end
   end
 
-  desc "bisect COMMAND", "Git Bisect with HEAD as the bad SHA and HEAD~20 as the good SHA, running your test for you with each step. If the test passes, type G <enter>. If it fails, type B <enter>. If it doesn't successfully run, type S <enter>, until git displays the SHA where the test started failing. Type q <enter> to quit."
-  def bisect(command)
-    system("git bisect start; git bisect bad; git bisect good HEAD~20")
+  desc "bisect 'COMMAND'", "Git Bisect with HEAD as the bad SHA and HEAD~17 as the good SHA, running your test for you with each step. If the test passes, type G <enter>. If it fails, type B <enter>. If it doesn't successfully run, type S <enter> to skip that SHA, until git displays the SHA where the test started failing. Type q <enter> to quit."
+  def bisect(command="")
+    system("git bisect start; git bisect bad; git bisect good HEAD~17")
+    system("#{command}")
+    loop do
+      system("#{command}")
+      show("Good branch, Bad branch, Skipable branch or Quit? (g/b/s/q)")
+      r = STDIN.gets.chomp
+      if r =~ /^g/
+        system("git bisect good")
+      elsif r =~ /^b/
+        system("git bisect bad")
+      elsif r =~ /^s/
+        system("git bisect skip")
+      elsif r =~ /^q/
+        system("git bisect reset")
+        break
+      end
+    end
   end
 
   private
