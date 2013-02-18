@@ -51,10 +51,15 @@ class Legit < Thor
 
   desc "bisect \"COMMAND\" SHAS_INCLUDED", "Git Bisect with HEAD as the bad SHA and HEAD~<SHAS_INCLUDED> as the good SHA, running your test for you with each step. If the test passes, type G <enter>. If it fails, type B <enter>. If it doesn't successfully run, type S <enter> to skip that SHA, until git displays the SHA where the test started failing. Type q <enter> to quit."
   def bisect(command = "", shas_included= "17" )
-    if shas_included.to_i.to_s == shas_included # is shas_included an integer or a SHA?
+    system("git rev-parse --quiet --verify #{shas_included}") # is shas_included a valid sha?
+    if $? == 0
+      system("git bisect start; git bisect bad; git bisect good #{shas_included.to_s}")
+    elsif shas_included.to_i.to_s == shas_included # is shas_included an integer?
       system("git bisect start; git bisect bad; git bisect good HEAD~#{shas_included.to_s}")
     else
-      system("git bisect start; git bisect bad; git bisect good #{shas_included.to_s}")
+      show("The SHA you provided doesn't seem to be in this branch. Please double check and try again.")
+      system("git bisect reset")
+      return
     end
     loop do
       system("#{command}")
