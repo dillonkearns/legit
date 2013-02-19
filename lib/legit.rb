@@ -32,6 +32,14 @@ class Legit < Thor
     end
   end
 
+  desc "bisect BAD GOOD COMMAND", "Find the first bad commit by running COMMAND, using GOOD and BAD as the first known good and bad commits"
+  def bisect(bad, good, *command_args)
+    command = command_args.join(' ')
+    run_command("git bisect start #{bad} #{good}")
+    run_command("git bisect run #{command}")
+    run_command("git bisect reset")
+  end
+
   desc "delete BRANCH", "Delete BRANCH both locally and remotely"
   def delete(branch_name)
     run_command("git branch -d #{branch_name}")
