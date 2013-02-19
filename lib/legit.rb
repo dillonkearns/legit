@@ -12,7 +12,7 @@ class Legit < Thor
       command << arg
     end
 
-    system(command.join(' '))
+    run_command(command.join(' '))
   end
 
   desc "catch-todos [TODO_FORMAT]", "Abort commit if any todos in TODO_FORMAT found"
@@ -34,14 +34,14 @@ class Legit < Thor
 
   desc "delete BRANCH", "Delete BRANCH both locally and remotely"
   def delete(branch_name)
-    system("git branch -d #{branch_name}")
+    run_command("git branch -d #{branch_name}")
 
     if $?.success?
       delete_remote_branch(branch_name)
     else
       show("Force delete branch #{branch_name}? (y/n)", :warning)
       if STDIN.gets.chomp =~ /^y/
-        system("git branch -D #{branch_name}")
+        run_command("git branch -D #{branch_name}")
         delete_remote_branch(branch_name)
       else
         puts "Abort. #{branch_name} not deleted"
@@ -55,7 +55,7 @@ class Legit < Thor
   end
 
   def run_catch_todos(todo_format)
-    system("git diff --staged | grep '^+' | grep #{todo_format}")
+    run_command("git diff --staged | grep '^+' | grep #{todo_format}")
 
     if $?.success?
       if options[:warn]
