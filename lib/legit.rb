@@ -57,6 +57,35 @@ class Legit < Thor
     end
   end
 
+  desc "bisect \"COMMAND\" SHAS_INCLUDED", "Git Bisect with HEAD as the bad SHA and HEAD~<SHAS_INCLUDED> as the good SHA, running your test for you with each step. If the test passes, type G <enter>. If it fails, type B <enter>. If it doesn't successfully run, type S <enter> to skip that SHA, until git displays the SHA where the test started failing. Type q <enter> to quit."
+  def bisect(command = "", shas_included= "17" )
+    system("git rev-parse --quiet --verify #{shas_included}") # is shas_included a valid sha?
+    if $? == 0
+      system("git bisect start; git bisect bad; git bisect good #{shas_included.to_s}")
+    elsif shas_included.to_i.to_s == shas_included # is shas_included an integer?
+      system("git bisect start; git bisect bad; git bisect good HEAD~#{shas_included.to_s}")
+    else
+      show("The SHA you provided doesn't seem to be in this branch. Please double check and try again.")
+      system("git bisect reset")
+      return
+    end
+    loop do
+      system("#{command}")
+      show("Good branch, Bad branch, Skipable branch or Quit? (g/b/s/q)")
+      r = STDIN.gets.chomp
+      if r =~ /^g/
+        system("git bisect good")
+      elsif r =~ /^b/
+        system("git bisect bad")
+      elsif r =~ /^s/
+        system("git bisect skip")
+      elsif r =~ /^q/
+        system("git bisect reset")
+        break
+      end
+    end
+  end
+
   private
   def repo
     @repo ||= Rugged::Repository.new('.')
