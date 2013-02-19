@@ -2,7 +2,7 @@
 
 [![Gem Version](https://fury-badge.herokuapp.com/rb/legit.png)](http://badge.fury.io/rb/legit)
 [![Dependency Status](https://gemnasium.com/dillonkearns/legit.png)](https://gemnasium.com/dillonkearns/legit)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/dillonkearns/dotfile-linker)
+[![Code Climate](https://codeclimate.com/github/dillonkearns/dotfile-linker.png)](https://codeclimate.com/github/dillonkearns/dotfile-linker)
 
 ## Installation
 ```bash
