@@ -34,6 +34,10 @@ def show(message, type = :success)
   puts message.send(color)
 end
 
+def todos_staged?(todo_format)
+  run_command("git diff --staged | grep '^+' | grep #{todo_format}")
+  $?.success?  # grep returns 1
+end
 
 def positive_response?(message, type = :normal)
   show("#{message} (y/n)", type)

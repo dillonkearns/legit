@@ -64,9 +64,7 @@ module Legit
     end
 
     def run_catch_todos(todo_format)
-      run_command("git diff --staged | grep '^+' | grep #{todo_format}")
-
-      if $?.success?
+      if todos_staged?(todo_format)
         if options[:warn]
           exit 1 unless positive_response?("[pre-commit hook] Found staged `#{todo_format}`s. Do you still want to continue?", :warning)
         else
@@ -74,7 +72,7 @@ module Legit
           exit 1
         end
       else
-        show("Success: No `#{todo_format}`s staged.", :success)
+        show("[pre-commit hook] Success: No `#{todo_format}`s staged.", :success)
       end
     end
   end
