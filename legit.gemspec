@@ -17,6 +17,9 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">=1.8.7"
 
   gem.add_development_dependency "rake", "~> 10.0.3"
+  gem.add_development_dependency "minitest", "~> 4.6.2"
+  gem.add_development_dependency "minitest-reporters"
+
   gem.add_runtime_dependency     "colorize", "~> 0.5.8"
   gem.add_runtime_dependency     "thor", "~> 0.17.0"
   gem.add_runtime_dependency     "rugged", "0.17.0.b7"    # need version 0.17 for a bug accessing Rugged::Repo.config in 0.16
