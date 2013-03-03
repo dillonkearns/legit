@@ -1,5 +1,6 @@
 # Legit
 
+[![Build Status](https://travis-ci.org/dillonkearns/legit.png)](https://travis-ci.org/dillonkearns/legit)
 [![Gem Version](https://fury-badge.herokuapp.com/rb/legit.png)](http://badge.fury.io/rb/legit)
 [![Dependency Status](https://gemnasium.com/dillonkearns/legit.png)](https://gemnasium.com/dillonkearns/legit)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/dillonkearns/dotfile-linker)
