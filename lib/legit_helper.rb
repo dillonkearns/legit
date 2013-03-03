@@ -9,14 +9,6 @@ def delete_remote_branch(branch_name)
   system("git push --delete origin #{branch_name}")
 end
 
-def author_equals_me
-  "--author='#{user_name}'"
-end
-
-def user_name
-  `git config --get user.name`.chomp
-end
-
 def run_command(command)
   show(command, :low_warning) if ENV['DEBUG']
   system(command)

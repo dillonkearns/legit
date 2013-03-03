@@ -8,7 +8,7 @@ module Legit
     def log(*args)
       command = []
       command << "git log --pretty=format:'%C(yellow)%h%Creset%C(bold cyan)%d%Creset %s %Cgreen(%cr)%Creset %C(bold magenta) <%an>%Creset' --graph --abbrev-commit --date=relative"
-      command << author_equals_me if options[:me]
+      command << "--author='#{repo.config['user.name']}'" if options[:me]
       args.each do |arg|
         command << arg
       end
