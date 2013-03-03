@@ -7,7 +7,34 @@ def current_branch
   system "git rev-parse --abbrev-ref HEAD"
 end
 
-def delete_remote_branch(branch_name)
+def delete_local_branch!(branch_name)
+  run_command("git branch -d #{branch_name}")
+  $?.success?
+end
+
+def force_delete_local_branch?(branch_name)
+  if yes?("Force delete branch?")
+    force_delete_local_branch!(branch_name)
+    true
+  else
+    false
+  end
+end
+
+def force_delete_local_branch!(branch_name)
+  run_command("git branch -D #{branch_name}")
+end
+
+def delete_remote_branch?(branch_name)
+  if yes?("Delete branch remotely?")
+    delete_remote_branch!(branch_name)
+    true
+  else
+    false
+  end
+end
+
+def delete_remote_branch!(branch_name)
   system("git push --delete origin #{branch_name}")
 end
 

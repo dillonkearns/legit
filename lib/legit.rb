@@ -43,19 +43,7 @@ module Legit
 
     desc "delete BRANCH", "Delete BRANCH both locally and remotely"
     def delete(branch_name)
-      run_command("git branch -d #{branch_name}")
-
-      if $?.success?
-        delete_remote_branch(branch_name)
-      else
-        show("Force delete branch #{branch_name}? (y/n)", :warning)
-        if STDIN.gets.chomp =~ /^y/
-          run_command("git branch -D #{branch_name}")
-          delete_remote_branch(branch_name)
-        else
-          puts "Abort. #{branch_name} not deleted"
-        end
-      end
+      delete_local_branch!(branch_name) || force_delete_local_branch?(branch_name) and delete_remote_branch?(branch_name)
     end
 
     private
