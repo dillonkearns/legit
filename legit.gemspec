@@ -20,6 +20,9 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "minitest", "~> 4.6.2"
   gem.add_development_dependency "minitest-reporters"
   gem.add_development_dependency "mocha", "~> 0.13.2"
+  gem.add_development_dependency "guard-minitest"
+  gem.add_development_dependency "growl"
+  gem.add_development_dependency "rb-fsevent"
 
   gem.add_runtime_dependency     "colorize", "~> 0.5.8"
   gem.add_runtime_dependency     "thor", "~> 0.17.0"
