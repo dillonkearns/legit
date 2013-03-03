@@ -74,7 +74,7 @@ module Legit
           exit 1
         end
       else
-        show("Success: No #{todo_format}s staged.", :success)
+        show("Success: No `#{todo_format}`s staged.", :success)
       end
     end
   end
