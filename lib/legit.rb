@@ -54,7 +54,7 @@ module Legit
     def run_catch_todos(todo_format)
       if todos_staged?(todo_format)
         if options[:warn]
-          exit 1 unless positive_response?("[pre-commit hook] Found staged `#{todo_format}`s. Do you still want to continue?", :warning)
+          exit 1 unless yes?("[pre-commit hook] Found staged `#{todo_format}`s. Do you still want to continue?", :yellow)
         else
           show("[pre-commit hook] Aborting commit... found staged `#{todo_format}`s.", :warning)
           exit 1
