@@ -70,6 +70,15 @@ describe Legit::CLI do
       Legit::CLI.start(['delete', 'branch_to_delete'])
     end
   end
+
+  describe 'legit bisect' do
+    command = 'ruby -n my/test/file "/testpattern/"'
+    args = "bisect HEAD HEAD~5 #{command}"
+    Legit::CLI.any_instance.expects(:run_command).with('git bisect start HEAD HEAD~5')
+    Legit::CLI.any_instance.expects(:run_command).with("git bisect run #{command}")
+    Legit::CLI.any_instance.expects(:run_command).with("git bisect reset")
+    Legit::CLI.start(args.split(' '))
+  end
 end
 
 def stub_config(config = {})
