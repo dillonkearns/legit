@@ -45,7 +45,7 @@ describe Legit::CLI do
   describe 'legit delete' do
     it 'force deletes branch when user responds yes' do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(false)
-      Legit::CLI.any_instance.expects(:yes?).with('Force delete branch?').returns(true)
+      Legit::CLI.any_instance.expects(:yes?).with('Force delete branch?', :red).returns(true)
       Legit::CLI.any_instance.expects(:force_delete_local_branch!).with('branch_to_delete')
       Legit::CLI.any_instance.expects(:delete_remote_branch?).with('branch_to_delete').returns(false)
       Legit::CLI.start('delete branch_to_delete'.split(' '))
@@ -53,20 +53,20 @@ describe Legit::CLI do
 
     it "doesn't force delete branch when user responds no" do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(false)
-      Legit::CLI.any_instance.expects(:yes?).with('Force delete branch?').returns(false)
+      Legit::CLI.any_instance.expects(:yes?).with('Force delete branch?', :red).returns(false)
       Legit::CLI.any_instance.expects(:force_delete_local_branch!).never
       Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
 
     it 'deletes remotely when user responds yes' do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(true)
-      Legit::CLI.any_instance.expects(:yes?).with('Delete branch remotely?').returns(true)
+      Legit::CLI.any_instance.expects(:yes?).with('Delete branch remotely?', :red).returns(true)
       Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
 
     it "doesn't delete remotely when user responds no" do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(true)
-      Legit::CLI.any_instance.expects(:yes?).with('Delete branch remotely?').returns(false)
+      Legit::CLI.any_instance.expects(:yes?).with('Delete branch remotely?', :red).returns(false)
       Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
   end
