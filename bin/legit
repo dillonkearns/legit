@@ -9,4 +9,4 @@ $stderr.sync = true
 
 require 'legit'
 
-Legit.start
+Legit::CLI.start

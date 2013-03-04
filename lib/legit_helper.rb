@@ -1,20 +1,40 @@
-require 'colorize'
 require 'rugged'
+
+LOG_BASE_COMMAND = "git log --pretty=format:'%C(yellow)%h%Creset%C(bold cyan)%d%Creset %s %Cgreen(%cr)%Creset %C(bold magenta) <%an>%Creset' --graph --abbrev-commit --date=relative"
 
 def current_branch
   system "git rev-parse --abbrev-ref HEAD"
 end
 
-def delete_remote_branch(branch_name)
+def delete_local_branch!(branch_name)
+  run_command("git branch -d #{branch_name}")
+  $?.success?
+end
+
+def force_delete_local_branch?(branch_name)
+  if yes?("Force delete branch?", :red)
+    force_delete_local_branch!(branch_name)
+    true
+  else
+    false
+  end
+end
+
+def force_delete_local_branch!(branch_name)
+  run_command("git branch -D #{branch_name}")
+end
+
+def delete_remote_branch?(branch_name)
+  if yes?("Delete branch remotely?", :red)
+    delete_remote_branch!(branch_name)
+    true
+  else
+    false
+  end
+end
+
+def delete_remote_branch!(branch_name)
   system("git push --delete origin #{branch_name}")
-end
-
-def author_equals_me
-  "--author='#{user_name}'"
-end
-
-def user_name
-  `git config --get user.name`.chomp
 end
 
 def run_command(command)
@@ -37,9 +57,13 @@ def show(message, type = :success)
         raise 'Unknown prompt type'
       end
 
-  puts message.send(color)
+  show(message, color)
 end
 
+def todos_staged?(todo_format)
+  run_command("git diff --staged | grep '^+' | grep #{todo_format}")
+  $?.success?  # grep returns 0 if there is a match
+end
 
 def positive_response?(message, type = :normal)
   show("#{message} (y/n)", type)
