@@ -1,4 +1,5 @@
 require 'rugged'
+require 'thor'
 
 LOG_BASE_COMMAND = "git log --pretty=format:'%C(yellow)%h%Creset%C(bold cyan)%d%Creset %s %Cgreen(%cr)%Creset %C(bold magenta) <%an>%Creset' --graph --abbrev-commit --date=relative"
 
@@ -38,8 +39,10 @@ def delete_remote_branch!(branch_name)
 end
 
 def run_command(command)
-  show(command, :low_warning) if ENV['DEBUG']
-  system(command)
+  options = {
+    :verbose => ENV.has_key?('LEGIT_DEBUG')
+  }
+  run(command, options)
 end
 
 def show(message, type = :success)

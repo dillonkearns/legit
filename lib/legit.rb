@@ -1,8 +1,9 @@
 require 'legit_helper'
-require 'thor'
 
 module Legit
   class CLI < Thor
+    include Thor::Actions
+
     desc "log [ARGS]", "print a graph-like log"
     method_option :me, :type => :boolean, :desc => 'Only include my commits'
     def log(*args)
