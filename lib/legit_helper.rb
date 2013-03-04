@@ -57,7 +57,7 @@ def show(message, type = :success)
         raise 'Unknown prompt type'
       end
 
-  show(message, color)
+  say(message, color)
 end
 
 def todos_staged?(todo_format)
