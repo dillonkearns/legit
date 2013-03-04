@@ -10,16 +10,16 @@ describe Legit::CLI do
 
   describe 'legit log' do
     it "parses --me command and passes through other options" do
-      args = ['log', '-p', '--me', '-n', '1']
+      args = 'log -p --me -n 1'
       stub_config({ 'user.name' => 'Stubbed Username' })
       Legit::CLI.any_instance.expects(:run_command).with("#{LOG_BASE_COMMAND} --author='Stubbed Username' -p -n 1")
-      Legit::CLI.start(args)
+      Legit::CLI.start(args.split(' '))
     end
 
     it "passes through options that aren't defined by legit log" do
-      args = ['log', '-p', '--stat']
+      args = 'log -p --stat'
       Legit::CLI.any_instance.expects(:run_command).with("#{LOG_BASE_COMMAND} -p --stat")
-      Legit::CLI.start(args)
+      Legit::CLI.start(args.split(' '))
     end
   end
 
@@ -30,7 +30,7 @@ describe Legit::CLI do
       Legit::CLI.any_instance.expects(:show).with("[pre-commit hook] Aborting commit... found staged `TODO`s.", :warning)
       Legit::CLI.start(['catch-todos'])
 
-      Legit::CLI.start(['catch-todos', '--disable'])
+      Legit::CLI.start('catch-todos --disable'.split(' '))
       Legit::CLI.any_instance.expects(:exit).never
     end
 
@@ -38,7 +38,7 @@ describe Legit::CLI do
       Legit::CLI.any_instance.expects(:todos_staged?).with('TODO').returns(false)
       Legit::CLI.any_instance.expects(:exit).never
       Legit::CLI.any_instance.expects(:show).with("[pre-commit hook] Success: No `TODO`s staged.", :success)
-      Legit::CLI.start(['catch-todos'])
+      Legit::CLI.start('catch-todos'.split(' '))
     end
   end
 
@@ -48,26 +48,26 @@ describe Legit::CLI do
       Legit::CLI.any_instance.expects(:yes?).with('Force delete branch?').returns(true)
       Legit::CLI.any_instance.expects(:force_delete_local_branch!).with('branch_to_delete')
       Legit::CLI.any_instance.expects(:delete_remote_branch?).with('branch_to_delete').returns(false)
-      Legit::CLI.start(['delete', 'branch_to_delete'])
+      Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
 
     it "doesn't force delete branch when user responds no" do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(false)
       Legit::CLI.any_instance.expects(:yes?).with('Force delete branch?').returns(false)
       Legit::CLI.any_instance.expects(:force_delete_local_branch!).never
-      Legit::CLI.start(['delete', 'branch_to_delete'])
+      Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
 
     it 'deletes remotely when user responds yes' do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(true)
       Legit::CLI.any_instance.expects(:yes?).with('Delete branch remotely?').returns(true)
-      Legit::CLI.start(['delete', 'branch_to_delete'])
+      Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
 
     it "doesn't delete remotely when user responds no" do
       Legit::CLI.any_instance.expects(:delete_local_branch!).with('branch_to_delete').returns(true)
       Legit::CLI.any_instance.expects(:yes?).with('Delete branch remotely?').returns(false)
-      Legit::CLI.start(['delete', 'branch_to_delete'])
+      Legit::CLI.start('delete branch_to_delete'.split(' '))
     end
   end
 
