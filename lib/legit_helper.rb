@@ -63,7 +63,7 @@ end
 
 def todos_staged?(todo_format)
   run_command("git diff --staged | grep '^+' | grep #{todo_format}")
-  $?.success?  # grep returns 1
+  $?.success?  # grep returns 0 if there is a match
 end
 
 def positive_response?(message, type = :normal)
