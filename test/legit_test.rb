@@ -27,7 +27,7 @@ describe Legit::CLI do
     it "calls exit 1 when TODOs staged but not when disabled" do
       Legit::CLI.any_instance.expects(:todos_staged?).with('TODO').returns(true)
       Legit::CLI.any_instance.expects(:exit).with(1)
-      Legit::CLI.any_instance.expects(:show).with("[pre-commit hook] Aborting commit... found staged `TODO`s.", :warning)
+      Legit::CLI.any_instance.expects(:say).with("[pre-commit hook] Aborting commit... found staged `TODO`s.", :red)
       Legit::CLI.start(['catch-todos'])
 
       Legit::CLI.start('catch-todos --disable'.split(' '))
@@ -37,7 +37,7 @@ describe Legit::CLI do
     it "doesn't call exit 1 when no TODOs staged" do
       Legit::CLI.any_instance.expects(:todos_staged?).with('TODO').returns(false)
       Legit::CLI.any_instance.expects(:exit).never
-      Legit::CLI.any_instance.expects(:show).with("[pre-commit hook] Success: No `TODO`s staged.", :success)
+      Legit::CLI.any_instance.expects(:say).with("[pre-commit hook] Success: No `TODO`s staged.", :green)
       Legit::CLI.start('catch-todos'.split(' '))
     end
   end

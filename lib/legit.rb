@@ -27,7 +27,7 @@ module Legit
         repo.config['hooks.ignore-todos'] = true
       else
         if repo.config['hooks.ignore-todos'] == 'true'
-          show("[pre-commit hook] ignoring todos. Re-enable with `legit catch-todos --enable`", :low_warning)
+          say("[pre-commit hook] ignoring todos. Re-enable with `legit catch-todos --enable`", :yellow)
         else
           run_catch_todos(todo_format)
         end
@@ -57,11 +57,11 @@ module Legit
         if options[:warn]
           exit 1 unless yes?("[pre-commit hook] Found staged `#{todo_format}`s. Do you still want to continue?", :yellow)
         else
-          show("[pre-commit hook] Aborting commit... found staged `#{todo_format}`s.", :warning)
+          say("[pre-commit hook] Aborting commit... found staged `#{todo_format}`s.", :red)
           exit 1
         end
       else
-        show("[pre-commit hook] Success: No `#{todo_format}`s staged.", :success)
+        say("[pre-commit hook] Success: No `#{todo_format}`s staged.", :green)
       end
     end
   end

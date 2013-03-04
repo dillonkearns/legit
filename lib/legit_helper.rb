@@ -45,24 +45,6 @@ def run_command(command)
   run(command, options)
 end
 
-def show(message, type = :success)
-  color =
-      case type
-      when :success
-        :green
-      when :warning
-        :red
-      when :low_warning
-        :yellow
-      when :normal
-        :white
-      else
-        raise 'Unknown prompt type'
-      end
-
-  say(message, color)
-end
-
 def todos_staged?(todo_format)
   run_command("git diff --staged | grep '^+' | grep #{todo_format}")
   $?.success?  # grep returns 0 if there is a match
