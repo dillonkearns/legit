@@ -23,6 +23,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "guard-minitest"
   gem.add_development_dependency "growl"
   gem.add_development_dependency "rb-fsevent"
+  gem.add_development_dependency "coveralls"
 
   gem.add_runtime_dependency     "thor", "~> 0.17.0"
   gem.add_runtime_dependency     "rugged", "0.17.0.b7"    # need version 0.17 for a bug accessing Rugged::Repo.config in 0.16
