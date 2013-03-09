@@ -24,20 +24,53 @@ describe Legit::CLI do
   end
 
   describe 'legit catch-todos' do
-    it "calls exit 1 when TODOs staged but not when disabled" do
+    it "calls exit 1 when TODOs staged but not disabled" do
       Legit::CLI.any_instance.expects(:todos_staged?).with('TODO').returns(true)
       Legit::CLI.any_instance.expects(:exit).with(1)
       Legit::CLI.any_instance.expects(:say).with("[pre-commit hook] Aborting commit... found staged `TODO`s.", :red)
-      Legit::CLI.start(['catch-todos'])
-
-      Legit::CLI.start('catch-todos --disable'.split(' '))
-      Legit::CLI.any_instance.expects(:exit).never
+      Legit::CLI.start('catch-todos'.split(' '))
     end
 
     it "doesn't call exit 1 when no TODOs staged" do
       Legit::CLI.any_instance.expects(:todos_staged?).with('TODO').returns(false)
       Legit::CLI.any_instance.expects(:exit).never
       Legit::CLI.any_instance.expects(:say).with("[pre-commit hook] Success: No `TODO`s staged.", :green)
+      Legit::CLI.start('catch-todos'.split(' '))
+    end
+
+    it "removes catch-todos-mode when called with --enable" do
+      config_mock = mock('config')
+      config_mock.expects(:delete).with('hooks.catch-todos-mode')
+      Legit::CLI.any_instance.stubs(:repo => stub({ :config => config_mock }))
+      Legit::CLI.start('catch-todos --enable'.split(' '))
+    end
+
+    it "sets catch-todos-mode to disable when called with --disable" do
+      config_mock = mock('config')
+      config_mock.expects(:[]=).with('hooks.catch-todos-mode', 'disable')
+      Legit::CLI.any_instance.stubs(:repo => stub({ :config => config_mock }))
+      Legit::CLI.start('catch-todos --disable'.split(' '))
+    end
+
+    it "sets catch-todos-mode to warn when called with --warn" do
+      config_mock = mock('config')
+      config_mock.expects(:[]=).with('hooks.catch-todos-mode', 'warn')
+      Legit::CLI.any_instance.stubs(:repo => stub({ :config => config_mock }))
+      Legit::CLI.start('catch-todos --warn'.split(' '))
+    end
+
+    it "skips catch-todos when disabled" do
+      stub_config('hooks.catch-todos-mode' => 'disable')
+      Legit::CLI.any_instance.expects(:run_catch_todos).never
+      Legit::CLI.any_instance.expects(:say).with("[pre-commit hook] ignoring todos. Re-enable with `legit catch-todos --enable`", :yellow)
+      Legit::CLI.start('catch-todos'.split(' '))
+    end
+
+    it "have exit status of 0 in warn mode when positive response" do
+      stub_config('hooks.catch-todos-mode' => 'warn')
+      Legit::CLI.any_instance.expects(:todos_staged?).returns(true)
+      Legit::CLI.any_instance.expects(:exit).never
+      Legit::CLI.any_instance.expects(:yes?).with("[pre-commit hook] Found staged `TODO`s. Do you still want to continue?", :yellow).returns(true)
       Legit::CLI.start('catch-todos'.split(' '))
     end
   end

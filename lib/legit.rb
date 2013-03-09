@@ -20,13 +20,16 @@ module Legit
     desc "catch-todos [TODO_FORMAT]", "Abort commit if any todos in TODO_FORMAT found"
     method_option :enable, :type => :boolean, :desc => 'Enable todo checking'
     method_option :disable, :type => :boolean, :desc => 'Disable todo checking'
+    method_option :warn, :type => :boolean, :desc => 'Turn on warn mode'
     def catch_todos(todo_format = "TODO")
       if options[:enable]
-        repo.config.delete('hooks.ignore-todos')
+        repo.config.delete('hooks.catch-todos-mode')
       elsif options[:disable]
-        repo.config['hooks.ignore-todos'] = true
+        repo.config['hooks.catch-todos-mode'] = 'disable'
+      elsif options[:warn]
+        repo.config['hooks.catch-todos-mode'] = 'warn'
       else
-        if repo.config['hooks.ignore-todos'] == 'true'
+        if repo.config['hooks.catch-todos-mode'] == 'disable'
           say("[pre-commit hook] ignoring todos. Re-enable with `legit catch-todos --enable`", :yellow)
         else
           run_catch_todos(todo_format)
@@ -54,7 +57,7 @@ module Legit
 
     def run_catch_todos(todo_format)
       if todos_staged?(todo_format)
-        if options[:warn]
+        if repo.config['hooks.catch-todos-mode'] == 'warn'
           exit 1 unless yes?("[pre-commit hook] Found staged `#{todo_format}`s. Do you still want to continue?", :yellow)
         else
           say("[pre-commit hook] Aborting commit... found staged `#{todo_format}`s.", :red)
