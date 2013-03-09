@@ -49,7 +49,7 @@ module Legit
 
     private
     def repo
-      @repo ||= Rugged::Repository.new('.')
+      @repo ||= Rugged::Repository.new(Rugged::Repository.discover)
     end
 
     def run_catch_todos(todo_format)
