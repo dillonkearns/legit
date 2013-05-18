@@ -35,7 +35,7 @@ def delete_remote_branch?(branch_name)
 end
 
 def delete_remote_branch!(branch_name)
-  system("git push --delete origin #{branch_name}")
+  run_command("git push --delete origin #{branch_name}")
 end
 
 def run_command(command)

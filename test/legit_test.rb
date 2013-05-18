@@ -6,6 +6,7 @@ describe Legit::CLI do
 
   before do
     stub_config
+    Legit::CLI.any_instance.stubs(:run_command)
   end
 
   describe 'legit log' do
