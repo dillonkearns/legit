@@ -1,5 +1,6 @@
 require File.expand_path('../test_helper', __FILE__)
 require 'legit'
+require File.expand_path('../setup_test_repo', __FILE__)
 
 describe Legit::CLI do
   include Mocha::Integration::MiniTest
@@ -105,6 +106,51 @@ describe Legit::CLI do
     end
   end
 
+  describe "legit checkout" do
+    describe "when no regex passed" do
+      it "runs git checkout command" do
+        Legit::CLI.any_instance.expects(:run_command).with('git checkout plain_old_branch')
+        Legit::CLI.start('checkout plain_old_branch'.split(' '))
+      end
+
+      it "passes through git checkout options" do
+        Legit::CLI.any_instance.expects(:run_command).with('git checkout -b plain_old_branch')
+        Legit::CLI.start('checkout -b plain_old_branch'.split(' '))
+      end
+    end
+
+    describe "when passed a regex" do
+      before do
+        setup_example_repo
+      end
+
+      it "calls checkout on branch if unique match" do
+        Legit::CLI.any_instance.expects(:run_command).with('git checkout feature_with_unique_match')
+        Legit::CLI.start('checkout /unique/'.split(' '))
+      end
+
+      it "calls checkout with options passed through with a unique match" do
+        Legit::CLI.any_instance.expects(:run_command).with('git checkout --contains feature_with_unique_match')
+        Legit::CLI.start('checkout --contains /unique/'.split(' '))
+      end
+
+      it "doesn't call checkout and exits if no match" do
+        Legit::CLI.any_instance.expects(:run_command).never
+        Legit::CLI.any_instance.expects(:say).with("No branches match /this_shouldnt_match_anything/", :red)
+        assert_raises(SystemExit) { Legit::CLI.start('checkout /this_shouldnt_match_anything/'.split(' ')) }
+      end
+
+      it "lists options if non-unique match" do
+        Legit::CLI.any_instance.expects(:run_command).never
+        Legit::CLI.any_instance.expects(:ask).with(
+          "Choose a branch to checkout:\n1. multiple_matches_a\n2. multiple_matches_b", :yellow).returns('2')
+        Legit::CLI.any_instance.expects(:run_command).with('git checkout multiple_matches_b')
+        Legit::CLI.start('checkout /multiple_matches/'.split(' '))
+      end
+
+    end
+  end
+
   describe 'legit bisect' do
     command = 'ruby -n my/test/file "/testpattern/"'
     args = "bisect HEAD HEAD~5 #{command}"
@@ -117,4 +163,10 @@ end
 
 def stub_config(config = {})
   Legit::CLI.any_instance.stubs(:repo => stub({ :config => config }))
+end
+
+def setup_example_repo
+  SetupTestRepo.new.invoke(:create_repo)
+  example_repo = Rugged::Repository.new(File.expand_path('../example_repo', __FILE__))
+  Legit::CLI.any_instance.stubs(:repo => example_repo)
 end

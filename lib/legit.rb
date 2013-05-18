@@ -45,6 +45,37 @@ module Legit
       run_command("git bisect reset")
     end
 
+    desc "checkout ARGS", "git checkout, matching an arg between /'s to a local branch, i.e. `legit checkout /my_feature/`"
+    def checkout(*args)
+      regex_index = args.index { |arg| arg =~ %r{\A/.*/\z} }
+
+      if regex_index
+        regex_argument = args.delete_at(regex_index)
+        regex_without_slashes = regex_argument[%r{\A/(.*)/\z}, 1]
+        regex = Regexp.new(regex_without_slashes)
+
+        local_branches = repo.branches.select { |b| b.branch? }
+        matching_branches = local_branches.select { |b| b.name =~ regex }
+
+        matched_branch =
+            case matching_branches.length
+            when 0
+              say("No branches match #{regex.inspect}", :red)
+              exit 1
+            when 1
+              matching_branches.first
+            else
+              matching_branches = matching_branches.sort_by {|b| b.name }
+              branch_list = matching_branches.each_with_index.map { |branch, index| "#{index + 1}. #{branch.name}"}
+              response = ask("Choose a branch to checkout:\n#{branch_list.join("\n")}", :yellow).to_i
+              matching_branches[response - 1]
+            end
+        args.insert(regex_index, matched_branch.name)
+      end
+
+      run_command("git checkout #{args.join(' ')}")
+    end
+
     desc "delete BRANCH", "Delete BRANCH both locally and remotely"
     def delete(branch_name)
       delete_local_branch!(branch_name) || force_delete_local_branch?(branch_name) and delete_remote_branch?(branch_name)
