@@ -12,6 +12,10 @@ module Legit::Helpers
     system "git rev-parse --abbrev-ref HEAD"
   end
 
+  def local_branches
+    repo.branches.select { |b| b.branch? }
+  end
+
   def delete_local_branch!(branch_name)
     run_command("git branch -d #{branch_name}")
     $?.success?
