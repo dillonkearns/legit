@@ -48,7 +48,7 @@ module Legit
 
     desc "checkout REGEX", "fuzzy git checkout - can use ruby regex notation `legit checkout BUG-40\\d`"
     def checkout(branch_pattern)
-      regex = Regexp.new(branch_pattern)
+      regex = Regexp.new(branch_pattern, Regexp::IGNORECASE)
       matching_branches = local_branches.select { |b| b.name =~ regex }
 
       matched_branch =

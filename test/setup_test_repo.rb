@@ -19,7 +19,7 @@ class SetupTestRepo < Thor
     create_file('README.txt', 'Example repo for testing')
     run "git add ."
     run "git commit -m 'Add README'"
-    branch_names = %w{ feature_with_unique_match multiple_matches_a multiple_matches_b }
+    branch_names = %w{ feature_with_unique_match multiple_matches_a multiple_matches_b UPPERCASE_BRANCH }
     branch_names.each do |branch_name|
       run "git branch #{branch_name}"
     end

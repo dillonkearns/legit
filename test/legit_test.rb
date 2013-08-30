@@ -130,9 +130,14 @@ describe Legit::CLI do
       Legit::CLI.start('checkout unique'.split(' '))
     end
 
+    it "uses case-insensitive regex" do
+      Legit::CLI.any_instance.expects(:run_command).with('git checkout UPPERCASE_BRANCH')
+      Legit::CLI.start('checkout uppercase'.split(' '))
+    end
+
     it "doesn't call checkout and exits if no match" do
       Legit::CLI.any_instance.expects(:run_command).never
-      Legit::CLI.any_instance.expects(:say).with("No branches match /this_shouldnt_match_anything/", :red)
+      Legit::CLI.any_instance.expects(:say).with("No branches match /this_shouldnt_match_anything/i", :red)
       assert_raises(SystemExit) { Legit::CLI.start('checkout this_shouldnt_match_anything'.split(' ')) }
     end
 
@@ -143,10 +148,9 @@ describe Legit::CLI do
 
     it "doesn't call checkout and exits if there is no regex match" do
       Legit::CLI.any_instance.expects(:run_command).never
-      Legit::CLI.any_instance.expects(:say).with("No branches match /^_wit./", :red)
+      Legit::CLI.any_instance.expects(:say).with("No branches match /^_wit./i", :red)
       assert_raises(SystemExit) { Legit::CLI.start('checkout ^_wit.'.split(' ')) }
     end
-
   end
 
   describe 'legit bisect' do
