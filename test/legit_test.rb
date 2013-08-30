@@ -14,13 +14,13 @@ describe Legit::CLI do
     it "parses --me command and passes through other options" do
       args = 'log -p --me -n 1'
       stub_config({ 'user.name' => 'Stubbed Username' })
-      Legit::CLI.any_instance.expects(:run_command).with("#{LOG_BASE_COMMAND} --author='Stubbed Username' -p -n 1")
+      Legit::CLI.any_instance.expects(:run_command).with("#{Legit::Helpers::LOG_BASE_COMMAND} --author='Stubbed Username' -p -n 1")
       Legit::CLI.start(args.split(' '))
     end
 
     it "passes through options that aren't defined by legit log" do
       args = 'log -p --stat'
-      Legit::CLI.any_instance.expects(:run_command).with("#{LOG_BASE_COMMAND} -p --stat")
+      Legit::CLI.any_instance.expects(:run_command).with("#{Legit::Helpers::LOG_BASE_COMMAND} -p --stat")
       Legit::CLI.start(args.split(' '))
     end
   end

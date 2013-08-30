@@ -1,14 +1,15 @@
-require 'legit_helper'
+require 'legit/helpers'
 
 module Legit
   class CLI < Thor
     include Thor::Actions
+    include Legit::Helpers
 
     desc "log [ARGS]", "print a graph-like log"
     method_option :me, :type => :boolean, :desc => 'Only include my commits'
     def log(*args)
       command = []
-      command << LOG_BASE_COMMAND
+      command << Legit::Helpers::LOG_BASE_COMMAND
       command << "--author='#{repo.config['user.name']}'" if options[:me]
       args.each do |arg|
         command << arg
