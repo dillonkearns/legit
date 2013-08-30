@@ -11,6 +11,8 @@
 $ gem install legit
 ```
 
+Requires ruby >= 1.9
+
 ## Usage
 Run `legit` with no options to see a list of commands and options.
 
