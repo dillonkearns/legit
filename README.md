@@ -16,6 +16,13 @@ Requires ruby >= 1.9
 ## Usage
 Run `legit` with no options to see a list of commands and options.
 
+### legit checkout
+Recommended alias: `lco`
+
+Fuzzy git checkout
+
+![legit checkout example](http://i.imgur.com/3RS02IB.png)
+
 ### Setting Up a `catch-todos` `pre-commit` Hook
 ![$ git up](http://i.imgur.com/rv0AfQi.png)
 
