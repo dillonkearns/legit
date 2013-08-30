@@ -4,6 +4,10 @@ require 'thor'
 module Legit::Helpers
   LOG_BASE_COMMAND = "git log --pretty=format:'%C(yellow)%h%Creset%C(bold cyan)%d%Creset %s %Cgreen(%cr)%Creset %C(bold magenta) <%an>%Creset' --graph --abbrev-commit --date=relative"
 
+  def repo
+    @repo ||= Rugged::Repository.new(Rugged::Repository.discover)
+  end
+
   def current_branch
     system "git rev-parse --abbrev-ref HEAD"
   end

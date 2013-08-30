@@ -83,10 +83,6 @@ module Legit
     end
 
     private
-    def repo
-      @repo ||= Rugged::Repository.new(Rugged::Repository.discover)
-    end
-
     def run_catch_todos(todo_format)
       if todos_staged?(todo_format)
         if repo.config['hooks.catch-todos-mode'] == 'warn'
