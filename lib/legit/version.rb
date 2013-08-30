@@ -1,3 +1,3 @@
 module Legit
-  VERSION = "0.0.13b"
+  VERSION = "0.0.13"
 end
