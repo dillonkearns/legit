@@ -186,9 +186,3 @@ describe Legit::CLI do
     end
   end
 end
-
-def stub_config(config = {})
-  any_instance_of(Rugged::Repository) do |repo|
-    stub(repo).config { config }
-  end
-end
