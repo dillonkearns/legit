@@ -29,12 +29,12 @@ class Thor
   end
 end
 
-def legit(command, options = {})
+def legit(command, expected_flow, options = {})
   fake_repo = options.delete(:fake_repo)
   if fake_repo
-    capture_legit_output(command)
+    capture_legit_output(command, expected_flow)
   else
-    TestRepo.inside(options) { capture_legit_output(command) }
+    TestRepo.inside(options) { capture_legit_output(command, expected_flow) }
   end
 end
 
@@ -44,7 +44,7 @@ def stub_config(config = {})
   end
 end
 
-def capture_legit_output(command)
+def capture_legit_output(command, expected_flow)
   flow = []
   any_instance_of(Legit::CLI) do |cli|
     stub(cli).run { |cmd, options| flow << [:run, cmd] }   # throw away options; only used for verbosity in debug mode
@@ -59,5 +59,5 @@ def capture_legit_output(command)
   rescue SystemExit
     # exit stops the thor command, but not the test runner
   end
-  flow
+  assert_equal expected_flow, flow
 end
