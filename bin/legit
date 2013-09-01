@@ -7,6 +7,6 @@ Signal.trap("INT") { exit 1 }
 $stdout.sync = true
 $stderr.sync = true
 
-require 'legit'
+require 'legit/cli'
 
 Legit::CLI.start

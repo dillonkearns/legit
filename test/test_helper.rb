@@ -1,6 +1,6 @@
 Bundler.require(:pry) if ENV['PRY']
 
-require 'legit'
+require 'legit/cli'
 require File.expand_path('../test_repo', __FILE__)
 
 require 'coveralls'
