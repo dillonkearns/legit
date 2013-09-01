@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "rake", "~> 10.1.0"
   gem.add_development_dependency "minitest", "~> 5.0.1"
-  gem.add_development_dependency "mocha", "~> 0.14.0"
+  gem.add_development_dependency "rr", "~> 1.1.2"
   gem.add_development_dependency "guard-minitest"
   gem.add_development_dependency "growl"
   gem.add_development_dependency "rb-fsevent"
