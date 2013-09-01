@@ -26,5 +26,5 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency     "json", "~> 1.8.0"
   gem.add_runtime_dependency     "thor", "~> 0.18.1"
-  gem.add_runtime_dependency     "rugged", "~> 0.19.0"
+  gem.add_runtime_dependency     "rugged", "~> 0.18.0.b1"
 end
