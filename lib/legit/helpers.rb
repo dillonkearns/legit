@@ -9,10 +9,6 @@ module Legit
       @repo ||= Rugged::Repository.new(Rugged::Repository.discover)
     end
 
-    def current_branch
-      system "git rev-parse --abbrev-ref HEAD"
-    end
-
     def local_branches
       repo.branches.select { |b| b.branch? }
     end
