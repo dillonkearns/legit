@@ -1,5 +1,8 @@
 Bundler.require(:pry) if ENV['PRY']
 
+require 'legit'
+require File.expand_path('../test_repo', __FILE__)
+
 require 'coveralls'
 Coveralls.wear!
 
@@ -28,11 +31,10 @@ end
 
 def legit(command, options = {})
   fake_repo = options.delete(:fake_repo)
-  run_command = Proc.new { Legit::CLI.start(command.split(' ')) }
   if fake_repo
-    run_command.call
+    capture_legit_output(command)
   else
-    TestRepo.inside(options, &run_command)
+    TestRepo.inside(options) { capture_legit_output(command) }
   end
 end
 
@@ -40,4 +42,22 @@ def stub_config(config = {})
   any_instance_of(Rugged::Repository) do |repo|
     stub(repo).config { config }
   end
+end
+
+def capture_legit_output(command)
+  flow = []
+  any_instance_of(Legit::CLI) do |cli|
+    stub(cli).run { |cmd, options| flow << [:run, cmd] }   # throw away options; only used for verbosity in debug mode
+    stub(cli).say { |*args| flow << [:say, args] }
+    stub(cli).exit do |code|
+      flow << [:exit, code]
+      exit code   # must call exit manually instead of using proxy or it will exit before it captures the flow
+    end
+  end
+  begin
+    Legit::CLI.start(command.split(' '))
+  rescue SystemExit
+    # exit stops the thor command, but not the test runner
+  end
+  flow
 end
