@@ -1,6 +1,6 @@
 require File.expand_path('../test_helper', __FILE__)
 require 'legit'
-require File.expand_path('../setup_test_repo', __FILE__)
+require File.expand_path('../test_repo', __FILE__)
 
 describe Legit::CLI do
   def expects_command(command)
@@ -126,13 +126,10 @@ describe Legit::CLI do
   end
 
   describe "legit checkout" do
-    before do
-      setup_example_repo
-    end
 
     it "checks out branch that matches substring" do
       expects_command('git checkout feature_with_unique_match')
-      Legit::CLI.start('checkout niqu'.split(' '))
+      TestRepo.inside { Legit::CLI.start('checkout niqu'.split(' ')) }
     end
 
     it "lists options if non-unique match" do
@@ -142,17 +139,17 @@ describe Legit::CLI do
       end
 
       expects_command('git checkout multiple_matches_b')
-      Legit::CLI.start('checkout multiple_matches'.split(' '))
+      TestRepo.inside { Legit::CLI.start('checkout multiple_matches'.split(' ')) }
     end
 
     it "calls checkout on branch if unique match" do
       expects_command('git checkout feature_with_unique_match')
-      Legit::CLI.start('checkout unique'.split(' '))
+      TestRepo.inside { Legit::CLI.start('checkout unique'.split(' ')) }
     end
 
     it "uses case-insensitive regex" do
       expects_command('git checkout UPPERCASE_BRANCH')
-      Legit::CLI.start('checkout uppercase'.split(' '))
+      TestRepo.inside { Legit::CLI.start('checkout uppercase'.split(' ')) }
     end
 
     it "doesn't call checkout and exits if no match" do
@@ -160,12 +157,14 @@ describe Legit::CLI do
         mock(cli).run_command.never
         mock(cli).say("No branches match /this_shouldnt_match_anything/i", :red)
       end
-      assert_raises(SystemExit) { Legit::CLI.start('checkout this_shouldnt_match_anything'.split(' ')) }
+      assert_raises(SystemExit) do
+        TestRepo.inside { Legit::CLI.start('checkout this_shouldnt_match_anything'.split(' ')) }
+      end
     end
 
     it "calls checkout on branch if unique match" do
       expects_command('git checkout feature_with_unique_match')
-      Legit::CLI.start('checkout _wit.'.split(' '))
+      TestRepo.inside { Legit::CLI.start('checkout _wit.'.split(' ')) }
     end
 
     it "doesn't call checkout and exits if there is no regex match" do
@@ -173,7 +172,9 @@ describe Legit::CLI do
         mock(cli).run_command.never
         mock(cli).say("No branches match /^_wit./i", :red)
       end
-      assert_raises(SystemExit) { Legit::CLI.start('checkout ^_wit.'.split(' ')) }
+      assert_raises(SystemExit) do
+        TestRepo.inside { Legit::CLI.start('checkout ^_wit.'.split(' ')) }
+      end
     end
   end
 
@@ -190,15 +191,7 @@ describe Legit::CLI do
 end
 
 def stub_config(config = {})
-  any_instance_of(Legit::CLI) do |cli|
-    stub(cli).repo do
-      stub(Object.new).config { config }
-    end
+  any_instance_of(Rugged::Repository) do |repo|
+    stub(repo).config { config }
   end
-end
-
-def setup_example_repo
-  SetupTestRepo.new.invoke(:create_repo)
-  example_repo = Rugged::Repository.new(File.expand_path('../example_repo', __FILE__))
-  any_instance_of(Legit::CLI) { |cli| stub(cli).repo { example_repo } }
 end
