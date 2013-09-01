@@ -26,12 +26,13 @@ class Thor
   end
 end
 
-def legit(command, real_repo = true)
+def legit(command, options = {})
+  fake_repo = options.delete(:fake_repo)
   run_command = Proc.new { Legit::CLI.start(command.split(' ')) }
-  if real_repo
-    TestRepo.inside(&run_command)
-  else
+  if fake_repo
     run_command.call
+  else
+    TestRepo.inside(options, &run_command)
   end
 end
 

@@ -1,21 +1,21 @@
 require 'fileutils'
 
-module TestRepo
+class TestRepo
 
-  def self.inside(&block)
+  def self.inside(options = {}, &block)
     block_given? or raise "Must pass in block"
-    create!
-    Dir.chdir(test_dir, &block)
+    repo = TestRepo.new(options[:branches])
+    repo.create!
+    Dir.chdir(repo.test_dir, &block)
   ensure
-    destroy!
+    repo.destroy!
   end
 
-  private
-  def self.test_dir
-    File.expand_path('../sandbox', __FILE__)
+  def initialize(branches)
+    @branches = branches || []
   end
 
-  def self.create!
+  def create!
     FileUtils.mkdir_p(test_dir)
     FileUtils.cd(test_dir) do
       `git init`
@@ -24,16 +24,20 @@ module TestRepo
     end
   end
 
-  def self.destroy!
+  def destroy!
     FileUtils.rm_rf(test_dir)
   end
 
-  def self.setup_branches
+  def test_dir
+    File.expand_path('../sandbox', __FILE__)
+  end
+
+  private
+  def setup_branches
     File.open('README.txt', 'w') {|f| f.write("Example repo for testing\n") }
     `git add .`
     `git commit -m 'Add README'`
-    branch_names = %w{ feature_with_unique_match multiple_matches_a multiple_matches_b UPPERCASE_BRANCH }
-    branch_names.each do |branch_name|
+    @branches.each do |branch_name|
       `git branch #{branch_name}`
     end
   end
