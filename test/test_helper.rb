@@ -25,3 +25,12 @@ class Thor
     end
   end
 end
+
+def legit(command, real_repo = true)
+  run_command = Proc.new { Legit::CLI.start(command.split(' ')) }
+  if real_repo
+    TestRepo.inside(&run_command)
+  else
+    run_command.call
+  end
+end

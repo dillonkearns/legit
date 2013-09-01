@@ -16,16 +16,14 @@ describe Legit::CLI do
 
   describe 'legit log' do
     it "parses --me command and passes through other options" do
-      args = 'log -p --me -n 1'
       stub_config({ 'user.name' => 'Stubbed Username' })
       expects_command("#{Legit::Helpers::LOG_BASE_COMMAND} --author='Stubbed Username' -p -n 1")
-      Legit::CLI.start(args.split(' '))
+      legit 'log -p --me -n 1', false
     end
 
     it "passes through options that aren't defined by legit log" do
-      args = 'log -p --stat'
       expects_command("#{Legit::Helpers::LOG_BASE_COMMAND} -p --stat")
-      Legit::CLI.start(args.split(' '))
+      legit 'log -p --stat', false
     end
   end
 
@@ -36,7 +34,7 @@ describe Legit::CLI do
         mock(cli).exit(1)
         mock(cli).say("[pre-commit hook] Aborting commit... found staged `TODO`s.", :red)
       end
-      Legit::CLI.start('catch-todos'.split(' '))
+      legit 'catch-todos', false
     end
 
     it "doesn't call exit 1 when no TODOs staged" do
@@ -45,25 +43,25 @@ describe Legit::CLI do
         mock(cli).exit.never
         mock(cli).say("[pre-commit hook] Success: No `TODO`s staged.", :green)
       end
-      Legit::CLI.start('catch-todos'.split(' '))
+      legit 'catch-todos', false
     end
 
     it "removes catch-todos-mode when called with --enable" do
       config_mock = mock(Object.new).delete('hooks.catch-todos-mode')
       stub_config(config_mock)
-      Legit::CLI.start('catch-todos --enable'.split(' '))
+      legit 'catch-todos --enable', false
     end
 
     it "sets catch-todos-mode to disable when called with --disable" do
       config_mock = mock(Object.new).[]=('hooks.catch-todos-mode', 'disable')
       stub_config(config_mock)
-      Legit::CLI.start('catch-todos --disable'.split(' '))
+      legit 'catch-todos --disable', false
     end
 
     it "sets catch-todos-mode to warn when called with --warn" do
       config_mock = mock(Object.new).[]=('hooks.catch-todos-mode', 'warn')
       stub_config(config_mock)
-      Legit::CLI.start('catch-todos --warn'.split(' '))
+      legit 'catch-todos --warn', false
     end
 
     it "skips catch-todos when disabled" do
@@ -72,7 +70,7 @@ describe Legit::CLI do
         mock(cli).run_catch_todos.never
         mock(cli).say("[pre-commit hook] ignoring todos. Re-enable with `legit catch-todos --enable`", :yellow)
       end
-      Legit::CLI.start('catch-todos'.split(' '))
+      legit 'catch-todos', false
     end
 
     it "have exit status of 0 in warn mode when positive response" do
@@ -83,7 +81,7 @@ describe Legit::CLI do
         mock(cli).yes?("[pre-commit hook] Found staged `TODO`s. Do you still want to continue?", :yellow) { true }
       end
 
-      Legit::CLI.start('catch-todos'.split(' '))
+      legit 'catch-todos', false
     end
   end
 
@@ -96,7 +94,7 @@ describe Legit::CLI do
         mock(cli).delete_remote_branch?('branch_to_delete') { false }
       end
 
-      Legit::CLI.start('delete branch_to_delete'.split(' '))
+      legit 'delete branch_to_delete', false
     end
 
     it "doesn't force delete branch when user responds no" do
@@ -105,7 +103,7 @@ describe Legit::CLI do
         mock(cli).yes?('Force delete branch?', :red) { false }
         mock(cli).force_delete_local_branch!.never
       end
-      Legit::CLI.start('delete branch_to_delete'.split(' '))
+      legit 'delete branch_to_delete', false
     end
 
     it 'deletes remotely when user responds yes' do
@@ -113,7 +111,7 @@ describe Legit::CLI do
         mock(cli).delete_local_branch!('branch_to_delete') { true }
         mock(cli).yes?.with('Delete branch remotely?', :red) { true }
       end
-      Legit::CLI.start('delete branch_to_delete'.split(' '))
+      legit 'delete branch_to_delete', false
     end
 
     it "doesn't delete remotely when user responds no" do
@@ -121,7 +119,7 @@ describe Legit::CLI do
         mock(cli).delete_local_branch!('branch_to_delete') { true }
         mock(cli).yes?('Delete branch remotely?', :red) { false }
       end
-      Legit::CLI.start('delete branch_to_delete'.split(' '))
+      legit 'delete branch_to_delete', false
     end
   end
 
@@ -129,7 +127,7 @@ describe Legit::CLI do
 
     it "checks out branch that matches substring" do
       expects_command('git checkout feature_with_unique_match')
-      TestRepo.inside { Legit::CLI.start('checkout niqu'.split(' ')) }
+      legit 'checkout niqu'
     end
 
     it "lists options if non-unique match" do
@@ -139,17 +137,17 @@ describe Legit::CLI do
       end
 
       expects_command('git checkout multiple_matches_b')
-      TestRepo.inside { Legit::CLI.start('checkout multiple_matches'.split(' ')) }
+      legit 'checkout multiple_matches'
     end
 
     it "calls checkout on branch if unique match" do
       expects_command('git checkout feature_with_unique_match')
-      TestRepo.inside { Legit::CLI.start('checkout unique'.split(' ')) }
+      legit 'checkout unique'
     end
 
     it "uses case-insensitive regex" do
       expects_command('git checkout UPPERCASE_BRANCH')
-      TestRepo.inside { Legit::CLI.start('checkout uppercase'.split(' ')) }
+      legit 'checkout uppercase'
     end
 
     it "doesn't call checkout and exits if no match" do
@@ -158,13 +156,13 @@ describe Legit::CLI do
         mock(cli).say("No branches match /this_shouldnt_match_anything/i", :red)
       end
       assert_raises(SystemExit) do
-        TestRepo.inside { Legit::CLI.start('checkout this_shouldnt_match_anything'.split(' ')) }
+        legit 'checkout this_shouldnt_match_anything'
       end
     end
 
     it "calls checkout on branch if unique match" do
       expects_command('git checkout feature_with_unique_match')
-      TestRepo.inside { Legit::CLI.start('checkout _wit.'.split(' ')) }
+      legit 'checkout _wit.'
     end
 
     it "doesn't call checkout and exits if there is no regex match" do
@@ -173,7 +171,7 @@ describe Legit::CLI do
         mock(cli).say("No branches match /^_wit./i", :red)
       end
       assert_raises(SystemExit) do
-        TestRepo.inside { Legit::CLI.start('checkout ^_wit.'.split(' ')) }
+        legit 'checkout ^_wit.'
       end
     end
   end
@@ -181,11 +179,10 @@ describe Legit::CLI do
   describe 'legit bisect' do
     it "calls the right commands" do
       command = 'ruby -n my/test/file "/testpattern/"'
-      args = "bisect HEAD HEAD~5 #{command}"
       expects_command('git bisect start HEAD HEAD~5')
       expects_command("git bisect run #{command}")
       expects_command("git bisect reset")
-      Legit::CLI.start(args.split(' '))
+      legit "bisect HEAD HEAD~5 #{command}", false
     end
   end
 end
