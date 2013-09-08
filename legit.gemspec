@@ -16,6 +16,8 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">=1.8.7"
 
+  gem.license = "MIT"
+
   gem.add_development_dependency "rake", "~> 10.1.0"
   gem.add_development_dependency "minitest", "~> 5.0.1"
   gem.add_development_dependency "rr", "~> 1.1.2"
